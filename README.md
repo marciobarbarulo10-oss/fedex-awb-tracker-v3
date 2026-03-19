@@ -37,7 +37,7 @@ Desenvolvida para operações de **importação farmacêutica**, com foco em vis
 
 ## 🖥 Dashboard HTML
 
-O tracker gera automaticamente um dashboard interativo acessível pelo navegador em `http://localhost:8888`, incluindo:
+O tracker gera automaticamente um dashboard interativo acessível pelo navegador, incluindo:
 
 - **KPIs por categoria** com barras de acento coloridas e filtro por clique
 - **Mapa de calor** na coluna de dias — verde → amarelo → laranja → vermelho conforme o tempo parado
