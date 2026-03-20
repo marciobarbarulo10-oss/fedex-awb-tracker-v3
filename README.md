@@ -1,165 +1,125 @@
-# 📦 FedEx AWB Tracker — Rastreamento em Massa via API Oficial
+# FedEx AWB Tracker v3
 
-Ferramenta Python para rastreamento automatizado de múltiplos AWBs FedEx com classificação inteligente de status, dashboard HTML interativo e relatório mensal analítico.
+Rastreamento automático de remessas internacionais via API oficial FedEx — dashboard web, relatórios Excel, alertas de atraso e instalação com um clique.
 
-Desenvolvida para operações de **importação farmacêutica**, com foco em visibilidade de carga em trânsito internacional para o Brasil.
-
----
-
-## 🚀 O que faz
-
-- Lê uma lista de AWBs de um arquivo `.xlsx` (com pedido e produto)
-- Consulta a **API oficial da FedEx** em paralelo (multi-thread)
-- Classifica automaticamente cada remessa em **5 categorias de status**
-- Gera um **dashboard HTML interativo** atualizado a cada hora
-- Abre painel de detalhe completo por AWB ao pesquisar — linha do tempo de eventos estilo FedEx
-- Detecta e alerta remessas **em atraso** (alfândega ou hub internacional) em **dias úteis brasileiros**
-- Calcula **ETA estimado** com base no histórico de entregas por região de origem
-- Mantém **histórico de 3 meses** e detecta mudanças de status do dia
-- Gera **relatório mensal** navegável por mês com sparkline de volume e análise por região
+Desenvolvido para operações de importação com múltiplos AWBs simultâneos.
 
 ---
 
-## 📊 Categorias de Status
+## O que faz
+
+- Lê AWBs de um arquivo `.xlsx` e consulta a API FedEx em paralelo
+- Classifica cada remessa em 5 categorias de status com lógica própria
+- Gera dashboard web interativo com histórico completo de eventos por AWB
+- Detecta mudanças de status entre consultas e destaca alertas
+- Calcula dias úteis brasileiros (feriados nacionais fixos e móveis)
+- Mantém histórico de 3 meses e gera relatório mensal por região de origem
+- Sobe servidor local automaticamente — acesse pelo navegador em `http://localhost:8888`
+- Loop automático com intervalo configurável (1h, 2h, 4h ou 8h)
+
+---
+
+## Categorias de status
 
 | Categoria | Descrição |
-|---|---|
+|-----------|-----------|
 | 🏷 `LABEL CREATED` | Etiqueta criada, aguardando coleta |
 | ✈ `COMING TO BRAZIL` | Em trânsito internacional |
-| 🔍 `CUSTOMS INSPECTION` | Retido na Receita Federal / Alfândega |
+| 🔍 `CUSTOMS INSPECTION` | Retido na alfândega / Receita Federal |
 | 🚚 `NATIONAL TRANSIT` | Liberado — em trânsito nacional |
 | 📦 `OUT FOR DELIVERY` | Saiu para entrega |
 | ✅ `DELIVERED` | Entregue ao destinatário |
 
-> ⚠️ Remessas em atraso (+5 dias úteis em Alfândega ou +3 dias úteis em Memphis) são destacadas em vermelho no dashboard.
+> Remessas em atraso (+5 dias úteis em alfândega ou +3 dias em Memphis) são destacadas automaticamente em vermelho.
 
 ---
 
-## 🖥 Dashboard HTML
+## Dashboard
 
-O tracker gera automaticamente um dashboard interativo acessível pelo navegador, incluindo:
-
-- **KPIs por categoria** com barras de acento coloridas e filtro por clique
-- **Mapa de calor** na coluna de dias — verde → amarelo → laranja → vermelho conforme o tempo parado
-- **Linha do tempo por AWB** no hover de cada linha da tabela
-- **Ordenação clicável** em todas as colunas
-- **Coluna ETA** com estimativa de dias úteis restantes por região
-- **Painel de detalhe completo** ao buscar um AWB ou pedido — todos os eventos agrupados por data com hora e localização, igual ao site da FedEx
-- **Countdown regressivo** para a próxima atualização automática
-- **Mudanças de status do dia** com transições destacadas
-- **Relatório Mensal** com sparkline de volume histórico, navegação por mês e KPIs de lead time por região (mínimo, máximo, média — clicáveis para ver o AWB correspondente)
+- KPIs clicáveis por categoria com filtro instantâneo
+- Modal de detalhes por AWB: todos os eventos agrupados por data com hora e localização, no estilo do site da FedEx
+- Coluna de dias com heatmap: verde → amarelo → laranja → vermelho conforme o tempo parado
+- ETA estimado por região de origem baseado no histórico
+- Painel de mudanças com filtro por janela de tempo (1h / 6h / 12h / 24h)
+- Exportar mudanças como CSV
+- Relatório mensal com sparkline de volume e análise de lead time por região
+- Relatório por período com resumo de movimentações (gerado via `/gerar-relatorio`)
+- Countdown regressivo para a próxima atualização automática
 
 ---
 
-## 📅 Dias Úteis Brasileiros
+## Instalação
 
-O lead time e os alertas de atraso são calculados em **dias úteis**, excluindo finais de semana e os seguintes feriados:
+### Windows — um clique
 
-**Fixos:** Ano Novo, Tiradentes, Dia do Trabalho, Independência, N. Sra. Aparecida, Finados, Proclamação da República, Consciência Negra, Natal
+1. Baixe e extraia os arquivos em uma pasta (ex: `C:\FedExTracker`)
+2. Clique com o botão direito em `instalar.bat` → **Executar como administrador**
+3. O instalador configura Python e dependências automaticamente
+4. Um atalho "FedEx Tracker" será criado na Área de Trabalho
 
-**Móveis (calculados por ano):** Segunda e Terça de Carnaval, Sexta-feira Santa, Páscoa, Corpus Christi
+### Manual
+
+```bash
+pip install requests pandas openpyxl tqdm python-dotenv
+python fedex_api_oficial.py
+```
 
 ---
 
-## 🗂 Estrutura do Projeto
+## Configuração
+
+Na primeira execução, o navegador abre automaticamente a tela de configuração em `http://localhost:8888/config`.
+
+Insira seu **Client ID** e **Client Secret** da FedEx API. O sistema valida as credenciais antes de salvar — sem precisar editar nenhum arquivo.
+
+> Obtenha credenciais gratuitas em [developer.fedex.com](https://developer.fedex.com) → My Projects → Track API
+
+Para alterar depois: acesse `http://localhost:8888/config` com o sistema rodando.
+
+---
+
+## Arquivo de AWBs
+
+Crie `awbs.xlsx` na pasta do projeto com as colunas:
+
+| AWB | Pedido | PRODUTO |
+|-----|--------|---------|
+| 770123456789 | 75001 | NOME DO PRODUTO |
+
+`Pedido` e `PRODUTO` são opcionais mas aparecem no dashboard e nos relatórios.
+
+---
+
+## Estrutura do projeto
 
 ```
 fedex-awb-tracker-v3/
-├── tracker.py               # Script principal
-├── requirements.txt         # Dependências
-├── awbs.xlsx                # Sua lista de AWBs (não incluído — crie o seu)
+├── fedex_api_oficial.py   # Script principal
+├── instalar.bat           # Instalador Windows
+├── requirements.txt       # Dependências
+├── awbs.xlsx              # Sua lista de AWBs (não incluído)
 ├── .gitignore
 └── README.md
 ```
 
-### Arquivos gerados automaticamente
+Arquivos gerados automaticamente:
 
 | Arquivo | Descrição |
-|---|---|
-| `ultimo_status_gerado.xlsx` | Relatório Excel mais recente |
+|---------|-----------|
+| `ultimo_status_gerado.xlsx` | Relatório Excel com abas por categoria |
 | `ultimo_status_gerado.html` | Dashboard interativo |
 | `historico_status.xlsx` | Histórico dos últimos 3 meses |
-| `tracking.log` | Log detalhado de cada execução |
+| `config.json` | Credenciais e preferências (não subir no Git) |
+| `tracking.log` | Log de cada execução com rotação automática |
 
 ---
 
-## ⚙️ Configuração
+## Stack
 
-### 1. Clone o repositório
-
-```bash
-git clone https://github.com/marciobarbarulo10-oss/fedex-awb-tracker-v3.git
-cd fedex-awb-tracker-v3
-```
-
-### 2. Instale as dependências
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Configure suas credenciais FedEx
-
-Edite o arquivo `tracker.py` e substitua as credenciais na classe `Config`:
-
-```python
-client_id:     str = "SEU_CLIENT_ID_AQUI"
-client_secret: str = "SEU_CLIENT_SECRET_AQUI"
-```
-
-> Obtenha suas credenciais gratuitamente em: [developer.fedex.com](https://developer.fedex.com)
-
-### 4. Crie o arquivo `awbs.xlsx`
-
-O arquivo deve ter as seguintes colunas:
-
-| AWB | Pedido | PRODUTO |
-|---|---|---|
-| 123456789012 | 75001 | MEDICAMENTO A |
-| 987654321098 | 75002 | MEDICAMENTO B |
-
-A coluna `PRODUTO` é opcional mas recomendada — aparece no painel de detalhe e no relatório mensal.
+Python · FedEx Track API · pandas · openpyxl · tqdm · HTML/JS puro
 
 ---
 
-## ▶️ Uso
+## Licença
 
-```bash
-python tracker.py
-```
-
-O script vai:
-
-1. Ler os AWBs do `awbs.xlsx`
-2. Autenticar na API FedEx (token OAuth)
-3. Consultar todos os AWBs em paralelo (barra de progresso)
-4. Salvar o relatório Excel e o dashboard HTML
-5. Atualizar o histórico de 3 meses
-6. Subir servidor local em `http://localhost:8888`
-7. Repetir automaticamente a cada 1 hora
-
----
-
-## 🛠 Tecnologias
-
-- **Python 3.8+**
-- `requests` — chamadas à API FedEx
-- `pandas` — manipulação de dados
-- `openpyxl` — geração do Excel formatado
-- `tqdm` — barra de progresso
-- `concurrent.futures` — consultas paralelas
-- Dashboard em **HTML + CSS + JavaScript** puro — sem dependências de frontend
-
----
-
-## 💡 Contexto
-
-Projeto desenvolvido durante o curso de **Engenharia de Software** aplicando conhecimentos práticos adquiridos na gestão de processos de importação farmacêutica.
-
-Resolve um problema real: visibilidade centralizada de múltiplas remessas internacionais, com análise de lead time, alertas de atraso e histórico mensal — sem depender do site manual da FedEx.
-
----
-
-## 📄 Licença
-
-MIT License — sinta-se livre para usar e adaptar.
+MIT
