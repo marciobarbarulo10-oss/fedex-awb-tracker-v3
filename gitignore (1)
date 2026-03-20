@@ -1,0 +1,18 @@
+# Credenciais e configurações
+config.json
+.env
+
+# Dados gerados pelo tracker
+*.xlsx
+*.log
+ultimo_status_gerado.html
+relatorio_periodo_*.html
+*_relatorio_executivo.html
+*_bak_*.xlsx
+snapshot_*.xlsx
+ultimo_status_anterior.xlsx
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
