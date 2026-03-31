@@ -1,25 +1,26 @@
-# FedEx AWB Tracker v3
+# 📦 FedEx AWB Tracker — Medicsupply Edition
 
-Rastreamento automático de remessas internacionais via API oficial FedEx — dashboard web, relatórios Excel, alertas de atraso e instalação com um clique.
+Sistema de rastreamento automático de remessas internacionais via API oficial FedEx, com dashboard web interativo, relatórios Excel, alertas de atraso e identidade visual personalizada.
 
-Desenvolvido para operações de importação com múltiplos AWBs simultâneos.
+Desenvolvido sob medida para operações de importação de medicamentos com múltiplos AWBs simultâneos.
 
 ---
 
-## O que faz
+## ✨ O que o sistema faz
 
 - Lê AWBs de um arquivo `.xlsx` e consulta a API FedEx em paralelo
-- Classifica cada remessa em 5 categorias de status com lógica própria
+- Classifica cada remessa em 6 estágios de status com lógica própria
 - Gera dashboard web interativo com histórico completo de eventos por AWB
-- Detecta mudanças de status entre consultas e destaca alertas
+- Detecta mudanças de status entre consultas e destaca alertas visuais
 - Calcula dias úteis brasileiros (feriados nacionais fixos e móveis)
 - Mantém histórico de 3 meses e gera relatório mensal por região de origem
-- Sobe servidor local automaticamente — acesse pelo navegador em `http://localhost:8888`
+- Sobe servidor web local automaticamente — acesse em `http://localhost:8888`
 - Loop automático com intervalo configurável (1h, 2h, 4h ou 8h)
+- Interface visual no padrão da marca (tema claro personalizado)
 
 ---
 
-## Categorias de status
+## 🗂 Categorias de status
 
 | Categoria | Descrição |
 |-----------|-----------|
@@ -30,32 +31,33 @@ Desenvolvido para operações de importação com múltiplos AWBs simultâneos.
 | 📦 `OUT FOR DELIVERY` | Saiu para entrega |
 | ✅ `DELIVERED` | Entregue ao destinatário |
 
-> Remessas em atraso (+5 dias úteis em alfândega ou +3 dias em Memphis) são destacadas automaticamente em vermelho.
+> Remessas com +5 dias úteis em alfândega ou +3 dias em Memphis são destacadas automaticamente em vermelho.
 
 ---
 
-## Dashboard
+## 🖥 Dashboard
 
 - KPIs clicáveis por categoria com filtro instantâneo
-- Modal de detalhes por AWB: todos os eventos agrupados por data com hora e localização, no estilo do site da FedEx
-- Coluna de dias com heatmap: verde → amarelo → laranja → vermelho conforme o tempo parado
+- Modal de detalhes por AWB com todos os eventos agrupados por data, hora e localização
+- Heatmap de dias no status: verde → amarelo → laranja → vermelho
 - ETA estimado por região de origem baseado no histórico
 - Painel de mudanças com filtro por janela de tempo (1h / 6h / 12h / 24h)
-- Exportar mudanças como CSV
+- Exportar histórico de mudanças como CSV
 - Relatório mensal com sparkline de volume e análise de lead time por região
-- Relatório por período com resumo de movimentações (gerado via `/gerar-relatorio`)
+- Relatório por período personalizado
 - Countdown regressivo para a próxima atualização automática
+- Tema visual personalizado (pink `#E91E8C` + grafite `#2D3A4A`)
 
 ---
 
-## Instalação
+## 🚀 Instalação
 
 ### Windows — um clique
 
 1. Baixe e extraia os arquivos em uma pasta (ex: `C:\FedExTracker`)
 2. Clique com o botão direito em `instalar.bat` → **Executar como administrador**
 3. O instalador configura Python e dependências automaticamente
-4. Um atalho "FedEx Tracker" será criado na Área de Trabalho
+4. Um atalho será criado na Área de Trabalho
 
 ### Manual
 
@@ -66,11 +68,11 @@ python fedex_api_oficial.py
 
 ---
 
-## Configuração
+## ⚙️ Configuração
 
-Na primeira execução, o navegador abre automaticamente a tela de configuração em `http://localhost:8888/config`.
+Na primeira execução, o navegador abre automaticamente em `http://localhost:8888/config`.
 
-Insira seu **Client ID** e **Client Secret** da FedEx API. O sistema valida as credenciais antes de salvar — sem precisar editar nenhum arquivo.
+Insira seu **Client ID** e **Client Secret** da FedEx API. O sistema valida as credenciais antes de salvar.
 
 > Obtenha credenciais gratuitas em [developer.fedex.com](https://developer.fedex.com) → My Projects → Track API
 
@@ -78,34 +80,21 @@ Para alterar depois: acesse `http://localhost:8888/config` com o sistema rodando
 
 ---
 
-## Arquivo de AWBs
-
-Crie `awbs.xlsx` na pasta do projeto com as colunas:
-
-| AWB | Pedido | PRODUTO |
-|-----|--------|---------|
-| 770123456789 | 75001 | NOME DO PRODUTO |
-
-`Pedido` e `PRODUTO` são opcionais mas aparecem no dashboard e nos relatórios.
-
----
-
-## Estrutura do projeto
+## 📁 Estrutura do projeto
 
 ```
-fedex-awb-tracker-v3/
-├── fedex_api_oficial.py   # Script principal
-├── instalar.bat           # Instalador Windows
-├── requirements.txt       # Dependências
-├── awbs.xlsx              # Sua lista de AWBs (não incluído)
+fedex-awb-tracker/
+├── fedex_api_oficial.py            # Script principal
+├── aplicar_tema_medicsupply.py     # Patch de tema visual
+├── instalar.bat                    # Instalador Windows
+├── requirements.txt                # Dependências
+├── awbs.xlsx                       # Sua lista de AWBs (não incluído)
 ├── .gitignore
 └── README.md
 ```
 
-Arquivos gerados automaticamente:
-
-| Arquivo | Descrição |
-|---------|-----------|
+| Arquivo gerado | Descrição |
+|----------------|-----------|
 | `ultimo_status_gerado.xlsx` | Relatório Excel com abas por categoria |
 | `ultimo_status_gerado.html` | Dashboard interativo |
 | `historico_status.xlsx` | Histórico dos últimos 3 meses |
@@ -114,12 +103,38 @@ Arquivos gerados automaticamente:
 
 ---
 
-## Stack
+## 🛠 Stack
 
-Python · FedEx Track API · pandas · openpyxl · tqdm · HTML/JS puro
+Python · FedEx Track API · pandas · openpyxl · tqdm · HTML/JS puro · servidor HTTP nativo
 
 ---
 
-## Licença
+## 📋 Changelog
+
+### v4.0 — Março 2026
+- Tema visual personalizado aplicado (Medicsupply Edition)
+- Script `aplicar_tema_medicsupply.py` para aplicação do tema sem edição manual
+- Dashboard migrado para modo claro com paleta de marca
+- Header e rodapé com identidade visual completa
+- Hover, badges e filtros ativos no padrão da marca (pink `#E91E8C` + grafite `#2D3A4A`)
+
+### v3.0
+- Relatório executivo semanal em HTML
+- Relatório por período personalizado via interface web
+- Servidor web embutido com rota `/gerar-relatorio`
+- Módulo de configuração via browser (sem edição de arquivos)
+- Painel de mudanças de status com filtro por janela de tempo
+- Histórico mensal com sparkline de volume por região
+
+### v2.0
+- Dashboard HTML interativo com modal de eventos por AWB
+- Heatmap de dias no status
+- ETA estimado por região de origem
+- Detecção de mudanças entre consultas
+- Cálculo de dias úteis brasileiros com feriados móveis
+
+---
+
+## 📄 Licença
 
 MIT
