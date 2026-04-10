@@ -4,6 +4,7 @@ Sistema de rastreamento automático de remessas internacionais via API oficial F
 
 Desenvolvido sob medida para operações de importação de medicamentos com múltiplos AWBs simultâneos.
 
+![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=flat&logo=python&logoColor=white) ![License](https://img.shields.io/badge/License-MIT-green?style=flat) ![Status](https://img.shields.io/badge/Status-Active-success?style=flat) ![FedEx API](https://img.shields.io/badge/FedEx-Official%20API-4D148C?style=flat)
 ---
 
 ## ✨ O que o sistema faz
