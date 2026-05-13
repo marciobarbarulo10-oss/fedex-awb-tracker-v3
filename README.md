@@ -1,4 +1,4 @@
-# 📦 FedEx AWB Tracker — Medicsupply Edition
+# 📦 FedEx AWB Tracker
 
 Sistema de rastreamento automático de remessas internacionais via API oficial FedEx, com dashboard web interativo, relatórios Excel, alertas de atraso e identidade visual personalizada.
 
